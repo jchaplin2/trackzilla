@@ -1,0 +1,8 @@
+com/trackzilla/entity/Application.class
+com/trackzilla/TrackzillaApplication.class
+com/trackzilla/controller/TrackzillaController.class
+com/trackzilla/exception/ApplicationNotFoundException.class
+com/trackzilla/config/DBConfig.class
+com/trackzilla/service/ApplicationService.class
+com/trackzilla/service/ApplicationServiceImpl.class
+com/trackzilla/repository/ApplicationRepository.class
