@@ -1,0 +1,31 @@
+package com.trackzilla.entity;
+
+import org.junit.Test;
+
+public class ReleaseUnitTest {
+
+    @Test
+    public void testGetters(){
+        Long id = Long.parseLong("1");
+        Release release = new Release(id, "first release", "01/01/1900");
+
+        assert(release.getId()).equals(id);
+        assert(release.getDescription()).equals("first release");
+        assert(release.getReleaseDate()).equals("01/01/1900");
+    }
+
+    @Test
+    public void testGettersAndSetters(){
+        Long id = Long.parseLong("1");
+        Release release = new Release();
+
+        release.setId(id);
+        release.setDescription("first release");
+        release.setReleaseDate("01/01/1900");
+
+        assert(release.getId()).equals(id);
+        assert(release.getDescription()).equals("first release");
+        assert(release.getReleaseDate()).equals("01/01/1900");
+    }
+
+}

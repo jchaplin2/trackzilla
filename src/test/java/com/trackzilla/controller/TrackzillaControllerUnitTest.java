@@ -1,6 +1,7 @@
 package com.trackzilla.controller;
 
 import com.trackzilla.service.ApplicationService;
+import com.trackzilla.service.ReleaseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,6 +23,9 @@ public class TrackzillaControllerUnitTest {
     @MockBean
     ApplicationService applicationService;
 
+    @MockBean
+    ReleaseService releaseService;
+
     @Test
     public void getAllApplications() throws Exception {
         mockMvc.perform(get("/trackzilla/applications/"))
@@ -30,6 +34,16 @@ public class TrackzillaControllerUnitTest {
                 .andExpect(content().json("[]"));
 
         verify(applicationService, times(1)).listApplications();
+    }
+
+    @Test
+    public void getAllReleases() throws Exception {
+        mockMvc.perform(get("/trackzilla/releases/"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("[]"));
+
+        verify(releaseService, times(1)).listReleases();
     }
 
 }
