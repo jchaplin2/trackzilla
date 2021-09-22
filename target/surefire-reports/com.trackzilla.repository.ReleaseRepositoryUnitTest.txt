@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.trackzilla.repository.ReleaseRepositoryUnitTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.722 s - in com.trackzilla.repository.ReleaseRepositoryUnitTest
