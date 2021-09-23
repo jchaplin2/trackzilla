@@ -2,9 +2,11 @@ package com.trackzilla.controller;
 
 import com.trackzilla.entity.Application;
 import com.trackzilla.entity.Release;
+import com.trackzilla.entity.Ticket;
 import com.trackzilla.exception.ApplicationNotFoundException;
 import com.trackzilla.service.ApplicationService;
 import com.trackzilla.service.ReleaseService;
+import com.trackzilla.service.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +20,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/trackzilla")
 public class TrackzillaController {
-    ApplicationService applicationService;
-    private ReleaseService releaseService;
+    private final ApplicationService applicationService;
+    private final ReleaseService releaseService;
+    private final TicketService ticketService;
 
-    TrackzillaController(ApplicationService applicationService, ReleaseService releaseService) {
+    public TrackzillaController(ApplicationService applicationService, ReleaseService releaseService, TicketService ticketService) {
         this.applicationService = applicationService;
         this.releaseService = releaseService;
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/applications")
@@ -45,5 +49,11 @@ public class TrackzillaController {
         } catch (ApplicationNotFoundException exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Application Not Found");
         }
+    }
+
+    @GetMapping("/tickets")
+    public ResponseEntity<List<Ticket>> getAllTickets() {
+        List<Ticket> list = ticketService.listTickets();
+        return new ResponseEntity<List<Ticket>>(list, HttpStatus.OK);
     }
 }

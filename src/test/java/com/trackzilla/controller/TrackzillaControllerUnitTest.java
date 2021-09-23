@@ -2,6 +2,7 @@ package com.trackzilla.controller;
 
 import com.trackzilla.service.ApplicationService;
 import com.trackzilla.service.ReleaseService;
+import com.trackzilla.service.TicketService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,6 +26,9 @@ public class TrackzillaControllerUnitTest {
 
     @MockBean
     ReleaseService releaseService;
+
+    @MockBean
+    TicketService ticketService;
 
     @Test
     public void getAllApplications() throws Exception {
