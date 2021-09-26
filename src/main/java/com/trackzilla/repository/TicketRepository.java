@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
-    List<Release> findByApplicationId(Application app);
+    List<Ticket> findByApplicationId(Application app);
 }
