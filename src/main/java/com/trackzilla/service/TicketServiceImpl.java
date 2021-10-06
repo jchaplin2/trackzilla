@@ -1,11 +1,13 @@
 package com.trackzilla.service;
 
+import com.trackzilla.entity.Release;
 import com.trackzilla.entity.Ticket;
 import com.trackzilla.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -26,5 +28,8 @@ public class TicketServiceImpl implements TicketService {
     public void delete(long id) {
         ticketRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Ticket> findTicket(long id){return ticketRepository.findById(id);}
 
 }

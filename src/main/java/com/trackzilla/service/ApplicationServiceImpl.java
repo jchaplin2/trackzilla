@@ -1,9 +1,8 @@
 package com.trackzilla.service;
 
 import com.trackzilla.entity.Application;
-import com.trackzilla.exception.ApplicationNotFoundException;
+import com.trackzilla.exception.ResourceNotFoundException;
 import com.trackzilla.repository.ApplicationRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +11,6 @@ import java.util.Optional;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
-
-    // TODO: https://www.javaguides.net/2019/07/spring-data-jpa-save-findbyid-findall-deletebyid-example.html
 
     @Autowired
     private ApplicationRepository applicationRepository;
@@ -24,13 +21,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Application findApplication(long id) {
-        Optional<Application> optionalApplication = applicationRepository.findById(id);
+    public Optional<Application> findApplication(long id) {
+        Optional<Application> application = applicationRepository.findById(id);
 
-        if(optionalApplication.isPresent())
-            return optionalApplication.get();
-        else
-            throw new ApplicationNotFoundException("Application Not Found");
+        return application;
     }
 
     public boolean deleteApplicationById(Long id) {

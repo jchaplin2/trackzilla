@@ -3,19 +3,17 @@ package com.trackzilla.controller;
 import com.trackzilla.entity.Application;
 import com.trackzilla.entity.Release;
 import com.trackzilla.entity.Ticket;
-import com.trackzilla.exception.ApplicationNotFoundException;
+import com.trackzilla.exception.ResourceNotFoundException;
 import com.trackzilla.service.ApplicationService;
 import com.trackzilla.service.ReleaseService;
 import com.trackzilla.service.TicketService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/trackzilla")
@@ -30,30 +28,65 @@ public class TrackzillaController {
         this.ticketService = ticketService;
     }
 
-    @GetMapping("/applications")
+    @GetMapping(value = "/applications", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Application>> getAllApplications() {
-        List<Application> list = applicationService.listApplications();
-        return new ResponseEntity<List<Application>>(list, HttpStatus.OK);
-    }
+        List<Application> applications = applicationService.listApplications();
 
-    @GetMapping("/releases")
-    public ResponseEntity<List<Release>> getAllReleases() {
-        List<Release> list = releaseService.listReleases();
-        return new ResponseEntity<List<Release>>(list, HttpStatus.OK);
-    }
-
-    @GetMapping("/application/{id}")
-    public ResponseEntity<Application> getApplication(@PathVariable("id") long id) {
-        try {
-            return new ResponseEntity<Application>(applicationService.findApplication(id), HttpStatus.OK);
-        } catch (ApplicationNotFoundException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Application Not Found");
+        HttpStatus httpStatus = HttpStatus.OK;
+        if(applications.isEmpty()) {
+             httpStatus = HttpStatus.NO_CONTENT;
         }
+
+        return new ResponseEntity<List<Application>>(applications, httpStatus);
     }
 
-    @GetMapping("/tickets")
-    public ResponseEntity<List<Ticket>> getAllTickets() {
-        List<Ticket> list = ticketService.listTickets();
-        return new ResponseEntity<List<Ticket>>(list, HttpStatus.OK);
+    @GetMapping(value = "/releases", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Release>> getAllReleases() {
+        List<Release> releases = releaseService.listReleases();
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        if(releases.isEmpty()) {
+            httpStatus = HttpStatus.NO_CONTENT;
+        }
+
+        return new ResponseEntity<List<Release>>(releases, httpStatus);
     }
+
+    @GetMapping(value = "/application/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Application> getApplication(@PathVariable("id") long id) {
+        Application application = applicationService.findApplication(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ERROR! Application with id: "+ id + " not found."));
+
+        return new ResponseEntity<>(application, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/release/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Release> getRelease(@PathVariable("id") long id) {
+        Release release = releaseService.findRelease(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ERROR! Release with id: "+ id + " not found."));
+
+        return new ResponseEntity<Release>(release, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Ticket>> getAllTickets() {
+        List<Ticket> tickets = ticketService.listTickets();
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        if(tickets.isEmpty()) {
+            httpStatus = HttpStatus.NO_CONTENT;
+        }
+
+        return new ResponseEntity<List<Ticket>>(tickets, httpStatus);
+    }
+
+    @GetMapping(value = "/ticket/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Ticket> getTicket(@PathVariable("id") long id) {
+        Ticket application = ticketService.findTicket(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ERROR! Ticket with id: "+ id + " not found."));
+
+        return new ResponseEntity<>(application, HttpStatus.OK);
+    }
+
+    //TODO:Add post methods/mappings for adding new releases/tickets/apps.
 }

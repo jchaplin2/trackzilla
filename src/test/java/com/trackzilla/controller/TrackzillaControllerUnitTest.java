@@ -32,9 +32,9 @@ public class TrackzillaControllerUnitTest {
 
     @Test
     public void getAllApplications() throws Exception {
-        mockMvc.perform(get("/trackzilla/applications/"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/trackzilla/applications").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json("[]"));
 
         verify(applicationService, times(1)).listApplications();
@@ -43,8 +43,8 @@ public class TrackzillaControllerUnitTest {
     @Test
     public void getAllReleases() throws Exception {
         mockMvc.perform(get("/trackzilla/releases/"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json("[]"));
 
         verify(releaseService, times(1)).listReleases();
