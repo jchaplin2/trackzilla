@@ -3,9 +3,10 @@ package com.trackzilla.entity;
 import javax.persistence.*;
 
 @Entity
+@SequenceGenerator(name="ticket_seq", initialValue=5, allocationSize=100)
 public class Ticket {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_seq")
     private Long id;
     private String title;
     private String description;

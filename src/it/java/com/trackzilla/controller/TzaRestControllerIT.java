@@ -11,10 +11,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -31,10 +35,17 @@ public class TzaRestControllerIT {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    public static final String ROOT_URL = "http://localhost:";
+
+    //NOTE: based on insert values set up in data-it.sql
+    public static final int NUMBER_OF_EXISTING_APPLICATIONS = 5;
+    public static final int NUMBER_OF_EXISTING_TICKETS = 4;
+    public static final int NUMBER_OF_EXISTING_RELEASES = 4;
+
     @Test
     public void getAllApplications() throws Exception {
         ResponseEntity<List> response =
-                this.restTemplate.getForEntity("http://localhost:" + port + "/trackzilla/applications/", List.class);
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/applications/", List.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
@@ -42,7 +53,7 @@ public class TzaRestControllerIT {
     @Test
     public void getAllTickets() throws Exception {
         ResponseEntity<List> response =
-                this.restTemplate.getForEntity("http://localhost:" + port + "/trackzilla/tickets/", List.class);
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/tickets/", List.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
@@ -50,7 +61,7 @@ public class TzaRestControllerIT {
     @Test
     public void getAllReleases() throws Exception {
         ResponseEntity<List> response =
-                this.restTemplate.getForEntity("http://localhost:" + port + "/trackzilla/releases/", List.class);
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/releases/", List.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
@@ -58,7 +69,7 @@ public class TzaRestControllerIT {
     @Test
     public void getOneApplication() throws Exception {
         ResponseEntity<Application> response =
-                this.restTemplate.getForEntity("http://localhost:" + port + "/trackzilla/application/1", Application.class);
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/application/1", Application.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
@@ -66,7 +77,7 @@ public class TzaRestControllerIT {
     @Test
     public void getOneTicket() throws Exception {
         ResponseEntity<Ticket> response =
-                this.restTemplate.getForEntity("http://localhost:" + port + "/trackzilla/ticket/1", Ticket.class);
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/ticket/1", Ticket.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
@@ -74,9 +85,79 @@ public class TzaRestControllerIT {
     @Test
     public void getOneRelease() throws Exception {
         ResponseEntity<Release> response =
-                this.restTemplate.getForEntity("http://localhost:" + port + "/trackzilla/ticket/1", Release.class);
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/ticket/1", Release.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
+
+    @Test
+    public void postApplication() throws Exception {
+        String url = String.format("%s%s%s", ROOT_URL, port, "/trackzilla/application");
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("name", "app1");
+        params.put("description", "first app");
+        params.put("owner", "me");
+
+        HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
+        this.restTemplate.postForEntity(url, request, Application.class);
+
+        ResponseEntity<ArrayList> response =
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/applications", ArrayList.class);
+
+        int numberOfExpectedApps = NUMBER_OF_EXISTING_APPLICATIONS + 1;
+        assertThat(response.getBody().size(), equalTo( Integer.valueOf(numberOfExpectedApps) ));
+    }
+
+    @Test
+    public void postRelease() throws Exception {
+        String url = String.format("%s%s%s", ROOT_URL, port, "/trackzilla/release");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("id", Long.valueOf(5));
+        params.put("description", "first release");
+        params.put("releaseDate", "01/01/1900");
+
+        HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
+        this.restTemplate.postForEntity(url, request, Release.class);
+
+        String getUrl = String.format("%s%s%s", ROOT_URL, port, "/trackzilla/releases");
+        ResponseEntity<ArrayList> response =
+                this.restTemplate.getForEntity(getUrl, ArrayList.class);
+
+        int numberOfExpectedReleases = NUMBER_OF_EXISTING_RELEASES + 1;
+        assertThat(response.getBody().size(), equalTo( Integer.valueOf(numberOfExpectedReleases) ));
+    }
+
+    @Test
+    public void postTicket() throws Exception {
+        ResponseEntity<Application> appResponse =
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/application/1", Application.class);
+        Application app = appResponse.getBody();
+
+        ResponseEntity<Release> releaseResponse =
+                this.restTemplate.getForEntity(ROOT_URL + port + "/trackzilla/application/1", Release.class);
+        Release rel = releaseResponse.getBody();
+
+        String url = String.format("%s%s%s", ROOT_URL, port, "/trackzilla/ticket");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("title", "My new feature");
+        params.put("description", "best description");
+        params.put("application", app);
+        params.put("release", rel);
+        params.put("status", "OPEN");
+
+        HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
+        this.restTemplate.postForEntity(url, request, Ticket.class);
+
+        String getUrl = String.format("%s%s%s", ROOT_URL, port, "/trackzilla/tickets");
+        ResponseEntity<ArrayList> response =
+                this.restTemplate.getForEntity(getUrl, ArrayList.class);
+
+        int numberOfExpectedTickets = NUMBER_OF_EXISTING_TICKETS + 1;
+        assertThat(response.getBody().size(), equalTo( Integer.valueOf(numberOfExpectedTickets) ));
+    }
+
 
 }

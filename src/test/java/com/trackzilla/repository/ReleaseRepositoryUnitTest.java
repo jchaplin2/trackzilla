@@ -21,8 +21,7 @@ public class ReleaseRepositoryUnitTest {
 
     @BeforeEach
     public void setup(){
-        Long id = Long.parseLong("1");
-        Release release = new Release(id, "first release", "01/01/1900");
+        Release release = new Release("first release", "01/01/1900");
         releaseRepository.save(release);
     }
 
@@ -35,7 +34,6 @@ public class ReleaseRepositoryUnitTest {
     @Test
     public void testFindByReleaseDate(){
         List<Release> releases = releaseRepository.findByReleaseDate("01/01/1900");
-        System.out.println(releases.size());
         assertThat(releases).isNotNull();
         assertThat(Integer.valueOf(releases.size())).isEqualTo(1);
     }

@@ -29,9 +29,9 @@ public class ReleaseServiceUnitTest {
     public void listReleases(){
         ArrayList<Release> listOfReleases = new ArrayList<Release>();
 
-        listOfReleases.add(new Release(Long.parseLong("1"), "John Smith", "first application"));
-        listOfReleases.add(new Release(Long.parseLong("2"), "Jane Smith", "second application"));
-        listOfReleases.add(new Release(Long.parseLong("3"), "Pat Smith", "third application"));
+        listOfReleases.add(new Release( "John Smith", "first application"));
+        listOfReleases.add(new Release( "Jane Smith", "second application"));
+        listOfReleases.add(new Release( "Pat Smith", "third application"));
 
         Mockito.when(releaseService.listReleases()).thenReturn(listOfReleases);
 

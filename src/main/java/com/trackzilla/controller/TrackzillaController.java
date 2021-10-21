@@ -88,5 +88,28 @@ public class TrackzillaController {
         return new ResponseEntity<>(application, HttpStatus.OK);
     }
 
-    //TODO:Add post methods/mappings for adding new releases/tickets/apps.
+    @PostMapping(value = "/ticket", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Ticket> addTicket(@RequestBody Ticket newTicket) {
+        Ticket createdTicket = Optional.of(ticketService.save(newTicket))
+                .orElseThrow(()-> new RuntimeException(""));
+
+        return new ResponseEntity<>(createdTicket, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/release", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Release> addRelease(@RequestBody Release newRelease) {
+        Release createdRelease = Optional.of(releaseService.save(newRelease))
+                .orElseThrow(()-> new RuntimeException(""));
+
+        return new ResponseEntity<>(createdRelease, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/application", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Application> addApplication(@RequestBody Application newApplication) {
+        Application createdApplication = Optional.of(applicationService.save(newApplication))
+                .orElseThrow(()-> new RuntimeException(""));
+
+        return new ResponseEntity<>(createdApplication, HttpStatus.CREATED);
+    }
+
 }

@@ -6,9 +6,8 @@ public class TicketUnitTest {
 
     @Test
     public void testGetters(){
-        Long id = Long.parseLong("1");
         Application application = new Application("application1", "Jim Smith", "first application");
-        Release release = new Release(id, "first release", "01/01/1900");
+        Release release = new Release("first release", "01/01/1900");
         Ticket ticket = new Ticket("Sort Feature", "Add the ability to sort tickets by severity", application, release,"OPEN");
 
         assert(ticket.getTitle()).equals("Sort Feature");
@@ -22,7 +21,7 @@ public class TicketUnitTest {
         Ticket ticket = new Ticket();
 
         Application application = new Application("application1", "Jim Smith", "first application");
-        Release release = new Release(Long.parseLong("1"), "first release", "01/01/1900");
+        Release release = new Release("first release", "01/01/1900");
 
         ticket.setTitle("Sort Feature");
         ticket.setDescription("first release");

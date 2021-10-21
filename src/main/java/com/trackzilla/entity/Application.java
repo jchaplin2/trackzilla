@@ -3,10 +3,11 @@ package com.trackzilla.entity;
 import javax.persistence.*;
 
 @Entity
+@SequenceGenerator(name="seq", initialValue=6, allocationSize=100)
 public class Application {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
     @Column(name="application_id")
     private Long id;
 

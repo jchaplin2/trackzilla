@@ -25,8 +25,7 @@ public class TicketRepositoryUnitTest {
     @BeforeEach
     public void setup(){
         application = new Application("application1", "Jim Smith", "first application");
-        Long id = Long.parseLong("1");
-        release = new Release(id, "first release", "01/01/1900");
+        release = new Release("first release", "01/01/1900");
         Ticket ticket = new Ticket("Sort Feature", "Add the ability to sort tickets by severity", application, release,"OPEN");
 
         ticketRepository.save(ticket);

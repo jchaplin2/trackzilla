@@ -3,9 +3,10 @@ package com.trackzilla.entity;
 import javax.persistence.*;
 
 @Entity
+@SequenceGenerator(name="release_seq", initialValue=5, allocationSize=100)
 public class Release {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "release_seq")
     private Long id;
 
     @Column(name = "release_date", nullable = false)
@@ -15,8 +16,7 @@ public class Release {
     public Release() {
     }
 
-    public Release(Long id, String description, String releaseDate){
-        this.id = id;
+    public Release(String description, String releaseDate){
         this.releaseDate = releaseDate;
         this.description = description;
     }
