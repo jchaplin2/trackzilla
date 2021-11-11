@@ -19,6 +19,6 @@ https://www.pluralsight.com/courses/spring-boot-fundamentals?exp=3
 * Add authorization.
 
 ##Tech Stack
-*Java
-*Spring
-*JPA
+* Java
+* Spring
+* JPA
