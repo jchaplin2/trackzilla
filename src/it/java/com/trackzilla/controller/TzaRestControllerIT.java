@@ -114,7 +114,6 @@ public class TzaRestControllerIT {
         String url = String.format("%s%s%s", ROOT_URL, port, "/trackzilla/release");
 
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("id", Long.valueOf(5));
         params.put("description", "first release");
         params.put("releaseDate", "01/01/1900");
 

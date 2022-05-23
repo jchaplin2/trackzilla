@@ -1,2 +1,4 @@
 target
 trackzilla.iml
+.idea/*
+.DS_Store

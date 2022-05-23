@@ -37,7 +37,6 @@ public class ApplicationRepositoryUnitTest {
     @Test
     public void testFindByOwner(){
         List<Application> apps = applicationRepository.findByOwner("Jane Smith");
-        System.out.println(apps.size());
         assertThat(apps).isNotNull();
         assertThat(Integer.valueOf(apps.size())).isEqualTo(1);
     }
@@ -45,7 +44,6 @@ public class ApplicationRepositoryUnitTest {
     @Test
     public void testFindByDescription(){
         List<Application> apps = applicationRepository.findByDescription("first application");
-        System.out.println(apps.size());
         assertThat(apps).isNotNull();
         assertThat(Integer.valueOf(apps.size())).isEqualTo(1);
     }

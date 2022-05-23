@@ -23,3 +23,7 @@ CREATE TABLE "PUBLIC"."RELEASE"(
     "DESCRIPTION" VARCHAR(255),
     "RELEASE_DATE" VARCHAR(255) NOT NULL
 );
+
+create sequence "PUBLIC"."RELEASE_SEQ";
+create sequence "PUBLIC"."TICKET_SEQ";
+create sequence "PUBLIC"."SEQ";
