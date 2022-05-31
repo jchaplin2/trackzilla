@@ -15,7 +15,7 @@ https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution
 * Add unit / integration tests that can be run in separate phases
 * Add exception handling
 * Actuator
-* Add post mappings
+* Add post/put mappings
 * Jacoco code coverage
 
 ## Next Steps
