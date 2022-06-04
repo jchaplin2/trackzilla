@@ -196,7 +196,7 @@ public class TzaRestControllerIT {
                 this.restTemplate.getForEntity(getUrl, Release.class);
 
         assertThat(response.getBody().getDescription(), equalTo( "first release" ));
-        assertThat(response.getBody().getReleaseDate(), equalTo( "01/01/1900" ));
+        assertThat(response.getBody().getDate(), equalTo( "01/01/1900" ));
     }
 
     @Test

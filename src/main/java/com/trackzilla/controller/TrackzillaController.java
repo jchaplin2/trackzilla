@@ -149,7 +149,7 @@ public class TrackzillaController {
         Release release = releaseService.findRelease(releaseId)
                 .orElseThrow(() -> new ResourceNotFoundException("ERROR!! Release not found for this id :: " + releaseId));
 
-        release.setReleaseDate(updatedRelease.getReleaseDate());
+        release.setDate(updatedRelease.getDate());
         release.setDescription(updatedRelease.getDescription());
 
         Release saveddRelease = Optional.of(releaseService.save(release))

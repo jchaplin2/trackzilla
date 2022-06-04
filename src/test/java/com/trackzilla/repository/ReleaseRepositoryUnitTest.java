@@ -33,7 +33,7 @@ public class ReleaseRepositoryUnitTest {
 
     @Test
     public void testFindByReleaseDate(){
-        List<Release> releases = releaseRepository.findByReleaseDate("01/01/1900");
+        List<Release> releases = releaseRepository.findByDate("01/01/1900");
         assertThat(releases).isNotNull();
         assertThat(Integer.valueOf(releases.size())).isEqualTo(1);
     }

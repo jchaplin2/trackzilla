@@ -9,7 +9,7 @@ public class ReleaseUnitTest {
         Release release = new Release("first release", "01/01/1900");
 
         assert(release.getDescription()).equals("first release");
-        assert(release.getReleaseDate()).equals("01/01/1900");
+        assert(release.getDate()).equals("01/01/1900");
     }
 
     @Test
@@ -19,11 +19,11 @@ public class ReleaseUnitTest {
 
         release.setId(id);
         release.setDescription("first release");
-        release.setReleaseDate("01/01/1900");
+        release.setDate("01/01/1900");
 
         assert(release.getId()).equals(id);
         assert(release.getDescription()).equals("first release");
-        assert(release.getReleaseDate()).equals("01/01/1900");
+        assert(release.getDate()).equals("01/01/1900");
     }
 
 }

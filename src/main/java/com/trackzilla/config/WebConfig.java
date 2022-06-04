@@ -12,7 +12,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        CorsRegistration reg = registry.addMapping("/trackzilla/*");
-        reg.allowedOrigins("http://localhost:3000");
+        CorsRegistration reg = registry.addMapping("/**");
+        reg.allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+
+
     }
 }

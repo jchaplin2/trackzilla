@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReleaseRepository extends JpaRepository<Release, Long> {
 
-    List<Release> findByReleaseDate(String description);
+    List<Release> findByDate(String releaseDate);
 }

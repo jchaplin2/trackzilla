@@ -1,5 +1,7 @@
 package com.trackzilla.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,15 +11,18 @@ public class Release {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "release_seq")
     private Long id;
 
+    @JsonProperty("releaseDate")
     @Column(name = "release_date", nullable = false)
-    private String releaseDate;
+    private String date;
+
+    @JsonProperty("releaseDesc")
     private String description;
 
     public Release() {
     }
 
     public Release(String description, String releaseDate){
-        this.releaseDate = releaseDate;
+        this.date = releaseDate;
         this.description = description;
     }
 
@@ -29,12 +34,12 @@ public class Release {
         this.id = id;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
+    public String getDate() {
+        return date;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setDate(String releaseDate) {
+        this.date = releaseDate;
     }
 
     public String getDescription() {
