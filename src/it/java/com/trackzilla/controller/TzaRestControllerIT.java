@@ -185,7 +185,7 @@ public class TzaRestControllerIT {
         String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + RELEASES_ENDPOINT + "/1");
 
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("description", "first release");
+        params.put("releaseDesc", "first release");
         params.put("releaseDate", "01/01/1900");
 
         HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
