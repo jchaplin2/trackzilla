@@ -144,7 +144,8 @@
                 <version>0.8.4</version>
                 <configuration>
                     <excludes>
-                        <exclude>com.trackzilla.config</exclude>
+                        <exclude>com/trackzilla/config/*</exclude>
+                        <exclude>com/trackzilla/exception/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
