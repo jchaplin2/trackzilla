@@ -12,6 +12,7 @@ https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution
 
 ## Enhancements
 * Upgrade to spring 2.3.0 / java 11
+* Add dev/test/prod profiles
 * Add unit / integration tests that can be run in separate phases
 * Add exception handling
 * Actuator
