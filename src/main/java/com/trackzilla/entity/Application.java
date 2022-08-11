@@ -1,5 +1,7 @@
 package com.trackzilla.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,12 +13,15 @@ public class Application {
     @Column(name="application_id")
     private Long id;
 
+    @JsonProperty("applicationName")
     @Column(name = "app_name", nullable = false)
     private String name;
 
+    @JsonProperty("applicationDesc")
     @Column(length = 2000, name = "description", nullable = false)
     private String description;
 
+    @JsonProperty("applicationOwner")
     private String owner;
 
     public Application() {

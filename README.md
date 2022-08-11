@@ -1,7 +1,7 @@
 # Trackzilla
 
 ## Description
-A backend service for a bug tracking web application.
+A backend service for a bug tracking web application. Access h2 console from http://localhost:8080/h2
 
 
 ## Inspiration
@@ -21,6 +21,7 @@ https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution
 
 ## Next Steps
 * Rebuild front end from scratch in React.
+* validate database fields.
 * Add authorization.
 
 ## Tech Stack
