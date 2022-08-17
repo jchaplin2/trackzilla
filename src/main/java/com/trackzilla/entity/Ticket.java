@@ -1,5 +1,8 @@
 package com.trackzilla.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,18 +11,25 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_seq")
     private Long id;
+
+    @JsonProperty("ticketTitle")
     private String title;
+
+    @JsonProperty("ticketDesc")
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "application_id")
+    @JsonProperty("applicationId")
     private Application application;
 
     @ManyToOne
+    @Cascade(org.hibernate.annotations.CascadeType.MERGE)
     @JoinTable(name ="ticket_release", joinColumns = @JoinColumn(name = "ticket_fk"),
             inverseJoinColumns = @JoinColumn(name = "release_fk"))
     private Release release;
 
+    @JsonProperty("ticketStatus")
     private String status;
 
     public Ticket() {

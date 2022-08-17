@@ -27,6 +27,10 @@ public class Application {
     public Application() {
     }
 
+    public Application(String id){
+        this.id = Long.parseLong(id);
+    }
+
     public Application(String name, String owner, String description) {
         this.name = name;
         this.owner = owner;
