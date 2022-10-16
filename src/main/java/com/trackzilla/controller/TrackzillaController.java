@@ -7,11 +7,13 @@ import com.trackzilla.exception.ResourceNotFoundException;
 import com.trackzilla.service.ApplicationService;
 import com.trackzilla.service.ReleaseService;
 import com.trackzilla.service.TicketService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +27,11 @@ public class TrackzillaController {
     public final static String BASE_ENDPOINT = "/trackzilla";
 
     public final static String APPLICATIONS_ENDPOINT = "/applications";
+    public final static String APPLICATIONS_BY_DESC_ENDPOINT = "/applicationsByDesc";
     public final static String APPLICATIONS_ID_ENDPOINT = "/applications/{id}";
 
     public final static String RELEASES_ENDPOINT = "/releases";
+    public final static String RELEASES_BY_DESC_ENDPOINT = "/releasesByDesc";
     public final static String RELEASES_ID_ENDPOINT = "/releases/{id}";
 
     public final static String TICKETS_ENDPOINT = "/tickets";
@@ -61,6 +65,26 @@ public class TrackzillaController {
         }
 
         return new ResponseEntity<List<Release>>(releases, httpStatus);
+    }
+
+    @GetMapping(value = RELEASES_BY_DESC_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Release>> getReleasesByDesc(@RequestParam(value="desc", required = true) String desc) {
+        List<Release> releases = releaseService.findByDescription(desc).orElse(new ArrayList<Release>());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+
+        return new ResponseEntity<List<Release>>(releases, headers ,HttpStatus.OK);
+    }
+
+    @GetMapping(value = APPLICATIONS_BY_DESC_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Application>> getApplicationsByDesc(@RequestParam(value="desc", required = true) String desc) {
+        List<Application> releases = applicationService.findByDescription(desc).orElse(new ArrayList<Application>());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+
+        return new ResponseEntity<List<Application>>(releases, headers ,HttpStatus.OK);
     }
 
     @GetMapping(value = APPLICATIONS_ID_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)

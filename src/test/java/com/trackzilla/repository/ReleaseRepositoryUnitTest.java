@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,9 +34,9 @@ public class ReleaseRepositoryUnitTest {
 
     @Test
     public void testFindByReleaseDate(){
-        List<Release> releases = releaseRepository.findByDate("01/01/1900");
+        Optional<List<Release>> releases = releaseRepository.findByDate("01/01/1900");
         assertThat(releases).isNotNull();
-        assertThat(Integer.valueOf(releases.size())).isEqualTo(1);
+        assertThat(Integer.valueOf(releases.get().size())).isEqualTo(1);
     }
 
 }

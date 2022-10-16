@@ -33,4 +33,13 @@ public class ReleaseServiceImpl implements ReleaseService {
     @Override
     public Optional<Release> findRelease(long id){ return releaseRepository.findById(id);}
 
+
+    public Optional<List<Release>> findByDate(String releaseDate){
+        return releaseRepository.findByDate(releaseDate);
+    }
+
+    public Optional<List<Release>> findByDescription(String description) {
+        return releaseRepository.findByDescriptionContainsIgnoreCase(description);
+    }
+
 }

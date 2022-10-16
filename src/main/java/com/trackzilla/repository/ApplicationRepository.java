@@ -1,11 +1,13 @@
 package com.trackzilla.repository;
 
 import com.trackzilla.entity.Application;
+import com.trackzilla.entity.Release;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
@@ -17,5 +19,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     //need @Column annotation to do this.
     List<Application> findByDescription(String description);
+
+    Optional<List<Application>> findByDescriptionContainsIgnoreCase(String description);
 
 }

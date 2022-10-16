@@ -20,7 +20,6 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "application_id")
-    @JsonProperty("applicationId")
     private Application application;
 
     @ManyToOne

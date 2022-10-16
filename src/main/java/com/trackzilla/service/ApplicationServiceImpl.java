@@ -1,6 +1,7 @@
 package com.trackzilla.service;
 
 import com.trackzilla.entity.Application;
+import com.trackzilla.entity.Release;
 import com.trackzilla.exception.ResourceNotFoundException;
 import com.trackzilla.repository.ApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(app);
     }
 
-
+    public Optional<List<Application>> findByDescription(String description) {
+        return applicationRepository.findByDescriptionContainsIgnoreCase(description);
+    }
 
 
 }
