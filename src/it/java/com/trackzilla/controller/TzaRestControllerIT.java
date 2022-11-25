@@ -96,9 +96,9 @@ public class TzaRestControllerIT {
         String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + APPLICATIONS_ENDPOINT);
 
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("name", "app1");
-        params.put("description", "first app");
-        params.put("owner", "me");
+        params.put("applicationName", "app1");
+        params.put("applicationDesc", "first app");
+        params.put("applicationOwner", "me");
 
         HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
         this.restTemplate.postForEntity(url, request, Application.class);
@@ -165,9 +165,9 @@ public class TzaRestControllerIT {
 
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", String.valueOf(1));
-        params.put("name", "app1");
-        params.put("description", "first app");
-        params.put("owner", "me");
+        params.put("applicationName", "app1");
+        params.put("applicationDesc", "first app");
+        params.put("applicationOwner", "me");
 
         HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
         this.restTemplate.put(url, request, Application.class);
@@ -204,9 +204,9 @@ public class TzaRestControllerIT {
         String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + TICKETS_ENDPOINT + "/1");
 
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("title", "My Title");
-        params.put("description", "My Description");
-        params.put("status", "OPEN");
+        params.put("ticketTitle", "My Title");
+        params.put("ticketDesc", "My Description");
+        params.put("ticketStatus", "OPEN");
 
         HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
         this.restTemplate.put(url, request, Ticket.class);

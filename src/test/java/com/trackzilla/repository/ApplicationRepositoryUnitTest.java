@@ -1,7 +1,6 @@
 package com.trackzilla.repository;
 
 import com.trackzilla.entity.Application;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
