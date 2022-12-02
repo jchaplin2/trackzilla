@@ -18,3 +18,8 @@ INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (0,0);
 INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (1,3);
 INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (2,1);
 INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (2,4);
+insert into users(id, email, username, password) values(0, 'jchaplin@gmail.com', 'jchaplin', '$2a$10$vPl7dm9/5ilaq1UDndFTtuWLPSwWa2g9u5Wmp3tW4TmZ1k.5YactW');
+INSERT INTO roles (id, name) VALUES (1, 'ROLE_USER');
+INSERT INTO roles (id, name) VALUES (2, 'ROLE_APPLICATION_USER');
+INSERT INTO roles (id, name) VALUES (3, 'ROLE_TICKET_USER');
+INSERT INTO roles (id, name) VALUES (4, 'ROLE_RELEASE_USER');

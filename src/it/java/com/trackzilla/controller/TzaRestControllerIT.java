@@ -27,7 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest(classes = {TrackzillaApplication.class, DbConfig.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("it")
 public class TzaRestControllerIT {
     @LocalServerPort

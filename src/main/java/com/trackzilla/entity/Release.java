@@ -1,10 +1,14 @@
 package com.trackzilla.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @SequenceGenerator(name="release_seq", initialValue=5, allocationSize=100)
 public class Release {
     @Id
@@ -23,30 +27,6 @@ public class Release {
 
     public Release(String description, String releaseDate){
         this.date = releaseDate;
-        this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String releaseDate) {
-        this.date = releaseDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
 }

@@ -11,7 +11,7 @@ https://www.petrikainulainen.net/programming/maven/creating-code-coverage-report
 https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution-data-file
 
 ## Enhancements
-* Upgrade to spring 2.3.0 / java 11
+* Upgrade to spring 2.7.3 / java 11
 * Add dev/test/prod profiles
 * Add unit / integration tests that can be run in separate phases
 * Add exception handling
