@@ -3,15 +3,25 @@ package com.trackzilla.controller;
 import com.trackzilla.entity.*;
 import com.trackzilla.repository.RoleRepository;
 import com.trackzilla.repository.UserRepository;
+import com.trackzilla.security.JwtUtils;
+import com.trackzilla.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -22,6 +32,12 @@ public class AuthController {
   public static final String ERROR_EMAIL_INUSE = "ERROR! Email is already in use!";
   public static final String ERROR_ROLE_NOT_FOUND =  "ERROR! Role is not found.";
   public static final String SUCCESS_MESSAGE = "User registered successfully!";
+
+  @Autowired
+  JwtUtils jwtUtils;
+
+  @Autowired
+  AuthenticationManager authenticationManager;
 
   @Autowired
   UserRepository userRepository;
@@ -47,12 +63,13 @@ public class AuthController {
     }
 
     // Create new user's account
-    User user = new User(signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-               signUpRequest.getUsername());
+    User user = new User();
+    user.setEmail(signUpRequest.getEmail());
+    user.setPassword(encoder.encode(signUpRequest.getPassword()));
+    user.setUsername(signUpRequest.getUsername());
 
     Set<Role> roles = new HashSet<>();
-    Optional<Set<String>> role =  Optional.of(signUpRequest.getRole());
+    Optional<Set<String>> role =  Optional.ofNullable(signUpRequest.getRole());
 
     role.ifPresentOrElse(
             (roleSet) -> {
@@ -95,5 +112,26 @@ public class AuthController {
     userRepository.save(user);
 
     return ResponseEntity.ok(new MessageResponse(SUCCESS_MESSAGE));
+  }
+
+  @PostMapping("/signin")
+  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+    Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    String jwt = jwtUtils.generateJwtToken(authentication);
+
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    List<String> roles = userDetails.getAuthorities().stream()
+            .map(item -> item.getAuthority())
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(new JwtResponse(jwt,
+            userDetails.getId(),
+            userDetails.getUsername(),
+            userDetails.getEmail(),
+            roles));
   }
 }

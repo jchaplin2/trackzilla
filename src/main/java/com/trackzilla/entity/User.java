@@ -1,6 +1,7 @@
 package com.trackzilla.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ import java.util.Set;
 	})
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class User {
 	
 	@Id
@@ -26,14 +27,14 @@ public class User {
 	private Long id;
 	
 	@Column(nullable = false, unique = true, length = 45)
-	private final String email;
+	private String email;
 	
 	@Column(nullable = false, length = 64)
-	private final  String password;
+	private   String password;
 
 	@NotBlank
 	@Size(max = 20)
-	private final String username;
+	private  String username;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(  name = "user_roles",
