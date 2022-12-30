@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -36,7 +37,8 @@ public class User {
 	@Size(max = 20)
 	private  String username;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	//NOTE: Switch to FetchType.LAZY, then fix LazyInitializationException on sign-in.
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(  name = "user_roles",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))

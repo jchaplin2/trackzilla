@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
-  private static String AUTHORIZATION = "Authorization";
+  public static String AUTHORIZATION = "Authorization";
   private static String BEARER = "Bearer ";
 
   @Autowired

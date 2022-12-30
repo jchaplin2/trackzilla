@@ -1,26 +1,23 @@
 package com.trackzilla.service;
 
-import com.trackzilla.entity.Application;
 import com.trackzilla.entity.Release;
-import com.trackzilla.repository.ApplicationRepository;
 import com.trackzilla.repository.ReleaseRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class ReleaseServiceUnitTest {
     @Mock
     private ReleaseRepository releaseRepository;

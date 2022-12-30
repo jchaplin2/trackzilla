@@ -1,5 +1,6 @@
 package com.trackzilla.repository;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import com.trackzilla.entity.User;
@@ -17,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+
+    @Query("select u from User u join fetch u.roles")
+    ArrayList<User> retrieveAll();
+
 }

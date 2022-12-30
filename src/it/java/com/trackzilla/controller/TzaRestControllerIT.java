@@ -2,22 +2,26 @@ package com.trackzilla.controller;
 
 import com.trackzilla.TrackzillaApplication;
 import com.trackzilla.config.DbConfig;
+import com.trackzilla.config.WebSecurityITConfig;
 import com.trackzilla.entity.Application;
+import com.trackzilla.entity.JwtResponse;
 import com.trackzilla.entity.Release;
 import com.trackzilla.entity.Ticket;
+import com.trackzilla.security.AuthTokenFilter;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.*;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,87 +29,164 @@ import java.util.List;
 import static com.trackzilla.controller.TrackzillaController.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {TrackzillaApplication.class, DbConfig.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
+@Import(value = WebSecurityITConfig.class)
 @ActiveProfiles("it")
 public class TzaRestControllerIT {
     @LocalServerPort
     private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    protected TestRestTemplate restTemplate;
 
     public static final String ROOT_URL = "http://localhost:";
+
+    public static final String BEARER = "Bearer ";
 
     //NOTE: based on insert values set up in data-it.sql
     public static final int NUMBER_OF_EXISTING_APPLICATIONS = 5;
     public static final int NUMBER_OF_EXISTING_TICKETS = 4;
     public static final int NUMBER_OF_EXISTING_RELEASES = 4;
 
+    private String token;
+
+    @PostConstruct
+    public void postConstruct(){
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder().rootUri(ROOT_URL + port + "/");
+        restTemplate = new TestRestTemplate(restTemplateBuilder);
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("username", "admin");
+        params.put("password", "123456");
+        HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
+        ResponseEntity<JwtResponse> response = restTemplate.postForEntity("/api/auth/signin", request, JwtResponse.class);
+
+        token = response.getBody().getAccessToken();
+    }
+
     @Test
     public void getAllApplications() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add(AuthTokenFilter.AUTHORIZATION, BEARER + token);
+
         ResponseEntity<List> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + APPLICATIONS_ENDPOINT, List.class);
+                this.restTemplate.exchange(
+                        BASE_APPLICATIONS_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers
+                );
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
     @Test
-    public void getAllTickets() throws Exception {
+    public void getAllApplicationsException() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        final String bad_token = "abc123";
+        headers.add(AuthTokenFilter.AUTHORIZATION, BEARER + bad_token);
+
         ResponseEntity<List> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + TICKETS_ENDPOINT, List.class);
+                this.restTemplate.exchange(
+                        BASE_APPLICATIONS_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers
+                );
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    public void getAllTickets() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
+        ResponseEntity<List> response =
+                this.restTemplate.exchange(
+                        BASE_TICKETS_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers
+                );
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
     @Test
     public void getAllReleases() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
         ResponseEntity<List> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + RELEASES_ENDPOINT, List.class);
+                this.restTemplate.exchange(
+                        BASE_RELEASES_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers
+                );
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
     @Test
     public void getOneApplication() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
         ResponseEntity<Application> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + APPLICATIONS_ENDPOINT + "/1", Application.class);
+                this.restTemplate.exchange(
+                        BASE_APPLICATIONS_ENDPOINT + "/1", HttpMethod.GET, new HttpEntity<Object>(headers), Application.class, headers
+                );
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
     @Test
     public void getOneTicket() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
         ResponseEntity<Ticket> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + TICKETS_ENDPOINT + "/1", Ticket.class);
+                this.restTemplate.exchange(
+                        BASE_TICKETS_ENDPOINT + "/1", HttpMethod.GET, new HttpEntity<Object>(headers), Ticket.class, headers
+                );
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
     @Test
     public void getOneRelease() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
         ResponseEntity<Release> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + TICKETS_ENDPOINT + "/1", Release.class);
+                this.restTemplate.exchange(
+                        BASE_ENDPOINT + RELEASES_ENDPOINT + "/1", HttpMethod.GET, new HttpEntity<Object>(headers), Release.class, headers
+                );
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
+
+
     @Test
     public void postApplication() throws Exception {
-        String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + APPLICATIONS_ENDPOINT);
-
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("applicationName", "app1");
         params.put("applicationDesc", "first app");
         params.put("applicationOwner", "me");
 
-        HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
-        this.restTemplate.postForEntity(url, request, Application.class);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
 
-        ResponseEntity<ArrayList> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + APPLICATIONS_ENDPOINT, ArrayList.class);
+        HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
+        this.restTemplate.exchange(BASE_APPLICATIONS_ENDPOINT, HttpMethod.POST, request, Application.class);
+
+        ResponseEntity<List> response =
+                this.restTemplate.exchange(
+                        BASE_APPLICATIONS_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers
+                );
 
         int numberOfExpectedApps = NUMBER_OF_EXISTING_APPLICATIONS + 1;
         assertThat(response.getBody().size(), equalTo( Integer.valueOf(numberOfExpectedApps) ));
@@ -119,28 +200,34 @@ public class TzaRestControllerIT {
         params.put("description", "first release");
         params.put("releaseDate", "01/01/1900");
 
-        HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
-        this.restTemplate.postForEntity(url, request, Release.class);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
 
-        String getUrl = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + RELEASES_ENDPOINT);
-        ResponseEntity<ArrayList> response =
-                this.restTemplate.getForEntity(getUrl, ArrayList.class);
+        HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
+        ResponseEntity<Release> responseEntity = restTemplate.exchange(BASE_RELEASES_ENDPOINT, HttpMethod.POST, request, Release.class);
+
+        ResponseEntity<List> response = this.restTemplate.exchange(BASE_RELEASES_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers);
 
         int numberOfExpectedReleases = NUMBER_OF_EXISTING_RELEASES + 1;
         assertThat(response.getBody().size(), equalTo( Integer.valueOf(numberOfExpectedReleases) ));
     }
 
+
+
     @Test
     public void postTicket() throws Exception {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
         ResponseEntity<Application> appResponse =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + APPLICATIONS_ENDPOINT + "/1", Application.class);
+                this.restTemplate.exchange(BASE_APPLICATIONS_ENDPOINT + "/1", HttpMethod.GET, new HttpEntity<Object>(headers), Application.class, headers);
         Application app = appResponse.getBody();
 
         ResponseEntity<Release> releaseResponse =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + RELEASES_ENDPOINT + "/1", Release.class);
+                this.restTemplate.exchange(BASE_RELEASES_ENDPOINT + "/1", HttpMethod.GET, new HttpEntity<Object>(headers), Release.class, headers);
         Release rel = releaseResponse.getBody();
-
-        String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + TICKETS_ENDPOINT);
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("title", "My new feature");
@@ -150,11 +237,11 @@ public class TzaRestControllerIT {
         params.put("status", "OPEN");
 
         HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
-        this.restTemplate.postForEntity(url, request, Ticket.class);
+        this.restTemplate.exchange(BASE_TICKETS_ENDPOINT, HttpMethod.POST, request, Ticket.class);
 
-        String getUrl = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + TICKETS_ENDPOINT);
-        ResponseEntity<ArrayList> response =
-                this.restTemplate.getForEntity(getUrl, ArrayList.class);
+        ResponseEntity<List> response = this.restTemplate.exchange(
+                BASE_TICKETS_ENDPOINT, HttpMethod.GET, new HttpEntity<Object>(headers), List.class, headers
+        );
 
         int numberOfExpectedTickets = NUMBER_OF_EXISTING_TICKETS + 1;
         assertThat(response.getBody().size(), equalTo( Integer.valueOf(numberOfExpectedTickets) ));
@@ -162,19 +249,23 @@ public class TzaRestControllerIT {
 
     @Test
     public void updateApplication() throws Exception {
-        String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + APPLICATIONS_ENDPOINT + "/1");
-
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id", String.valueOf(1));
         params.put("applicationName", "app1");
         params.put("applicationDesc", "first app");
         params.put("applicationOwner", "me");
 
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
         HttpEntity<HashMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
-        this.restTemplate.put(url, request, Application.class);
+        this.restTemplate.exchange(BASE_APPLICATIONS_ENDPOINT + "/1", HttpMethod.PUT, request, Application.class);
 
         ResponseEntity<Application> response =
-                this.restTemplate.getForEntity(ROOT_URL + port + BASE_ENDPOINT + APPLICATIONS_ENDPOINT + "/1", Application.class);
+            this.restTemplate.exchange(
+                    BASE_APPLICATIONS_ENDPOINT + "/1", HttpMethod.GET, request, Application.class
+            );
 
         assertThat(response.getBody().getName(), equalTo( "app1" ));
         assertThat(response.getBody().getDescription(), equalTo( "first app" ));
@@ -183,18 +274,18 @@ public class TzaRestControllerIT {
 
     @Test
     public void updateRelease() throws Exception {
-        String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + RELEASES_ENDPOINT + "/1");
-
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("releaseDesc", "first release");
         params.put("releaseDate", "01/01/1900");
 
-        HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
-        this.restTemplate.put(url, request, Release.class);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
 
-        String getUrl = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + RELEASES_ENDPOINT + "/1");
-        ResponseEntity<Release> response =
-                this.restTemplate.getForEntity(getUrl, Release.class);
+        HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
+        this.restTemplate.exchange(BASE_RELEASES_ENDPOINT + "/1", HttpMethod.PUT, request, Release.class);
+
+        ResponseEntity<Release> response = this.restTemplate.exchange(BASE_RELEASES_ENDPOINT + "/1", HttpMethod.GET, request, Release.class);
 
         assertThat(response.getBody().getDescription(), equalTo( "first release" ));
         assertThat(response.getBody().getDate(), equalTo( "01/01/1900" ));
@@ -202,19 +293,19 @@ public class TzaRestControllerIT {
 
     @Test
     public void updateTicket() throws Exception {
-        String url = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + TICKETS_ENDPOINT + "/1");
-
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("ticketTitle", "My Title");
         params.put("ticketDesc", "My Description");
         params.put("ticketStatus", "OPEN");
 
         HttpEntity<HashMap<String, Object>> request = new HttpEntity<HashMap<String, Object>>(params, new HttpHeaders());
-        this.restTemplate.put(url, request, Ticket.class);
 
-        String getUrl = String.format("%s%s%s", ROOT_URL, port, BASE_ENDPOINT + TICKETS_ENDPOINT + "/1");
-        ResponseEntity<Ticket> response =
-                this.restTemplate.getForEntity(getUrl, Ticket.class);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", BEARER + token);
+
+        this.restTemplate.exchange(BASE_TICKETS_ENDPOINT + "/1", HttpMethod.PUT, request, Ticket.class);
+        ResponseEntity<Ticket> response = this.restTemplate.exchange(BASE_TICKETS_ENDPOINT + "/1", HttpMethod.GET, request, Ticket.class);
 
         assertThat(response.getBody().getTitle(), equalTo( "My Title" ));
         assertThat(response.getBody().getDescription(), equalTo( "My Description" ));

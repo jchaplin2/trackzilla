@@ -9,6 +9,7 @@ https://www.pluralsight.com/courses/spring-boot-fundamentals?exp=3
 https://tech.asimio.net/2019/04/08/Splitting-Unit-and-Integration-Tests-using-Maven-and-Surefire-plugin.html
 https://www.petrikainulainen.net/programming/maven/creating-code-coverage-reports-for-unit-and-integration-tests-with-the-jacoco-maven-plugin/
 https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution-data-file
+https://www.bezkoder.com/spring-boot-jwt-authentication/
 
 ## Enhancements
 * Upgrade to spring 2.7.3 / java 11
@@ -18,11 +19,11 @@ https://stackoverflow.com/questions/36304793/jacoco-with-maven-missing-execution
 * Actuator
 * Add post/put mappings
 * Jacoco code coverage
+* Add authorization.
 
 ## Next Steps
 * Rebuild front end from scratch in React.
 * validate database fields.
-* Add authorization.
 
 ## Tech Stack
 * Java

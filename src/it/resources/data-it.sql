@@ -14,3 +14,14 @@ INSERT INTO release (id, description, release_date) VALUES (4,'Q4 Release Contai
 INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (1,3);
 INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (2,1);
 INSERT INTO ticket_release (release_fk, ticket_fk) VALUES (2,4);
+INSERT INTO roles (id, name) VALUES (1, 'ROLE_USER');
+INSERT INTO roles (id, name) VALUES (2, 'ROLE_APPLICATION_USER');
+INSERT INTO roles (id, name) VALUES (3, 'ROLE_TICKET_USER');
+INSERT INTO roles (id, name) VALUES (4, 'ROLE_RELEASE_USER');
+insert into users(id, email, username, password) values(0, 'user@abc.com', 'admin', '$2a$10$ibC9nTj/HJBjBIuCvmXYt.Fp9dRsdxPQl.ogcBtl/26Puwsr03H4y');
+insert into users(id, email, username, password) values(1, 'admin@abc.com', 'basicUser', '$2a$10$ibC9nTj/HJBjBIuCvmXYt.Fp9dRsdxPQl.ogcBtl/26Puwsr03H4y');
+insert into user_roles(user_id, role_id) values(0, 1);
+insert into user_roles(user_id, role_id) values(0, 2);
+insert into user_roles(user_id, role_id) values(0, 3);
+insert into user_roles(user_id, role_id) values(0, 4);
+insert into user_roles(user_id, role_id) values(1, 1);

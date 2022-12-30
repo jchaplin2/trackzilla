@@ -31,12 +31,21 @@ public class TrackzillaController {
     public final static String APPLICATIONS_BY_DESC_ENDPOINT = "/applicationsByDesc";
     public final static String APPLICATIONS_ID_ENDPOINT = "/applications/{id}";
 
+    public final static String BASE_APPLICATIONS_ENDPOINT = BASE_ENDPOINT + APPLICATIONS_ENDPOINT;
+    public final static String BASE_APPLICATIONS_ID_ENDPOINT = BASE_ENDPOINT + APPLICATIONS_ID_ENDPOINT;
+
     public final static String RELEASES_ENDPOINT = "/releases";
     public final static String RELEASES_BY_DESC_ENDPOINT = "/releasesByDesc";
     public final static String RELEASES_ID_ENDPOINT = "/releases/{id}";
 
+    public final static String BASE_RELEASES_ENDPOINT = BASE_ENDPOINT + RELEASES_ENDPOINT;
+    public final static String BASE_RELEASES_ID_ENDPOINT = BASE_ENDPOINT + RELEASES_ID_ENDPOINT;
+
     public final static String TICKETS_ENDPOINT = "/tickets";
     public final static String TICKETS_ID_ENDPOINT = "/tickets/{id}";
+
+    public final static String BASE_TICKETS_ENDPOINT = BASE_ENDPOINT + TICKETS_ENDPOINT;
+    public final static String BASE_TICKETS_ID_ENDPOINT = BASE_ENDPOINT + TICKETS_ID_ENDPOINT;
 
     public TrackzillaController(ApplicationService applicationService, ReleaseService releaseService, TicketService ticketService) {
         this.applicationService = applicationService;
@@ -44,6 +53,7 @@ public class TrackzillaController {
         this.ticketService = ticketService;
     }
 
+    @PreAuthorize("hasRole('APPLICATION_USER')")
     @GetMapping(value = APPLICATIONS_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Application>> getAllApplications() {
         List<Application> applications = applicationService.listApplications();
@@ -56,6 +66,7 @@ public class TrackzillaController {
         return new ResponseEntity<List<Application>>(applications, httpStatus);
     }
 
+    @PreAuthorize("hasRole('RELEASE_USER')")
     @GetMapping(value = RELEASES_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Release>> getAllReleases() {
         List<Release> releases = releaseService.listReleases();
@@ -68,6 +79,7 @@ public class TrackzillaController {
         return new ResponseEntity<List<Release>>(releases, httpStatus);
     }
 
+    @PreAuthorize("hasRole('RELEASE_USER')")
     @GetMapping(value = RELEASES_BY_DESC_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Release>> getReleasesByDesc(@RequestParam(value="desc", required = true) String desc) {
         List<Release> releases = releaseService.findByDescription(desc).orElse(new ArrayList<Release>());
@@ -78,6 +90,7 @@ public class TrackzillaController {
         return new ResponseEntity<List<Release>>(releases, headers ,HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('APPLICATION_USER')")
     @GetMapping(value = APPLICATIONS_BY_DESC_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Application>> getApplicationsByDesc(@RequestParam(value="desc", required = true) String desc) {
         List<Application> releases = applicationService.findByDescription(desc).orElse(new ArrayList<Application>());
@@ -88,6 +101,7 @@ public class TrackzillaController {
         return new ResponseEntity<List<Application>>(releases, headers ,HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('APPLICATION_USER')")
     @GetMapping(value = APPLICATIONS_ID_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Application> getApplication(@PathVariable("id") long id) {
         Application application = applicationService.findApplication(id)
@@ -96,6 +110,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(application, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RELEASE_USER')")
     @GetMapping(value = RELEASES_ID_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Release> getRelease(@PathVariable("id") long id) {
         Release release = releaseService.findRelease(id)
@@ -104,6 +119,7 @@ public class TrackzillaController {
         return new ResponseEntity<Release>(release, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('TICKET_USER')")
     @GetMapping(value = TICKETS_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Ticket>> getAllTickets() {
         List<Ticket> tickets = ticketService.listTickets();
@@ -116,6 +132,7 @@ public class TrackzillaController {
         return new ResponseEntity<List<Ticket>>(tickets, httpStatus);
     }
 
+    @PreAuthorize("hasRole('TICKET_USER')")
     @GetMapping(value = TICKETS_ID_ENDPOINT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Ticket> getTicket(@PathVariable("id") long id) {
         Ticket ticket = ticketService.findTicket(id)
@@ -124,6 +141,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('TICKET_USER')")
     @PostMapping(value = TICKETS_ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Ticket> addTicket(@RequestBody Ticket newTicket) {
         Ticket createdTicket = Optional.of(ticketService.save(newTicket))
@@ -132,6 +150,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(createdTicket, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('RELEASE_USER')")
     @PostMapping(value = RELEASES_ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Release> addRelease(@RequestBody Release newRelease) {
         Release createdRelease = Optional.of(releaseService.save(newRelease))
@@ -140,6 +159,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(createdRelease, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('APPLICATION_USER')")
     @PostMapping(value = APPLICATIONS_ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Application> addApplication(@RequestBody Application newApplication) {
         Application createdApplication = Optional.of(applicationService.save(newApplication))
@@ -148,6 +168,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(createdApplication, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('TICKET_USER')")
     @PutMapping(value = TICKETS_ID_ENDPOINT,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Ticket> updateTicket(@PathVariable(value = "id") Long ticketId,
@@ -166,6 +187,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(savedTicket, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RELEASE_USER')")
     @PutMapping(value = RELEASES_ID_ENDPOINT,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Release> updateRelease(@PathVariable(value = "id") Long releaseId,
@@ -183,6 +205,7 @@ public class TrackzillaController {
         return new ResponseEntity<>(saveddRelease, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('APPLICATION_USER')")
     @PutMapping(value = APPLICATIONS_ID_ENDPOINT,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Application> updateApplication(@PathVariable(value = "id") Long applicationId,
