@@ -40,8 +40,9 @@ public class User {
 	//NOTE: Switch to FetchType.LAZY, then fix LazyInitializationException on sign-in.
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(  name = "user_roles",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "role_id"))
+			joinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT)),
+			inverseJoinColumns = @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT)),
+			uniqueConstraints = {@UniqueConstraint(columnNames = {"role_id", "user_id"})})
 	private Set<Role> roles = new HashSet<>();
 
 }
