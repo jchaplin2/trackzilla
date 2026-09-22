@@ -10,6 +10,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @Component
@@ -21,6 +26,15 @@ public class JwtUtils {
 
   @Value("${trackzilla.app.jwtExpirationMs}")
   private int jwtExpirationMs;
+
+  private SecretKey signingKey(){
+    try {
+      byte[] digest = MessageDigest.getInstance("SHA-512").digest(jwtSecret.getBytes(StandardCharsets.UTF_8));
+      return new SecretKeySpec(digest, "HmacSha512");
+    }catch (NoSuchAlgorithmException e){
+      throw new IllegalArgumentException("SHA-512 not available",e);
+    }
+  }
 
   public String generateJwtToken(Authentication authentication) {
 
@@ -35,12 +49,12 @@ public class JwtUtils {
   }
 
   public String getUserNameFromJwtToken(String token) {
-    return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    return Jwts.parser().verifyWith(signingKey()).build().parseSignedClaims(token).getPayload().getSubject();
   }
 
   public boolean validateJwtToken(String authToken) {
     try {
-      Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+      Jwts.parser().verifyWith(signingKey()).build().parseSignedClaims(authToken);
       return true;
     } catch (SignatureException e) {
       logger.error("Invalid JWT signature: {}", e.getMessage());

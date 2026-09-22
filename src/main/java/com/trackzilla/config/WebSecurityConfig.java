@@ -41,20 +41,33 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+		http.cors(cors -> {})
+				.csrf(csrf -> {})
+				.headers(headers -> headers.frameOptions(f -> f.disable()))
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/h2/**").permitAll()
+						.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers("/trackzilla/**").permitAll()
+						.requestMatchers("/actuator/**").permitAll()
+						.anyRequest().authenticated()
+				);
+
 		//NOTE : enable h2
-		http.headers().frameOptions().disable().and()
-				.authorizeRequests().antMatchers("/h2/**").permitAll();
-
-		http.cors().and().csrf().disable()
-				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers("/api/auth/**").permitAll().and()
-				.authorizeRequests().antMatchers("/trackzilla/**").permitAll()
-				.anyRequest().authenticated();
-
-		http.authenticationProvider(authenticationProvider());
-
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//		http.headers().frameOptions().disable().and()
+//				.authorizeRequests().antMatchers("/h2/**").permitAll();
+//
+//		http.cors().and().csrf().disable()
+//				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+//				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+//				.authorizeRequests().antMatchers("/api/auth/**").permitAll().and()
+//				.authorizeRequests().antMatchers("/trackzilla/**").permitAll()
+//				.anyRequest().authenticated();
+//
+//		http.authenticationProvider(authenticationProvider());
+//
+//		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

@@ -1,10 +1,10 @@
 package com.trackzilla.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 
 @Entity
 @SequenceGenerator(name="seq", initialValue=6, allocationSize=100)

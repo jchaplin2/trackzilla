@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,7 +49,9 @@ public class TrackzillaControllerUnitTest {
 
     @Test
     public void getAllReleases() throws Exception {
-        mockMvc.perform(get("/trackzilla/releases/"))
+        when(releaseService.listReleases()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/trackzilla/releases"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json("[]"));
@@ -56,7 +61,9 @@ public class TrackzillaControllerUnitTest {
 
     @Test
     public void getAllTickets() throws Exception {
-        mockMvc.perform(get("/trackzilla/tickets/"))
+        when(ticketService.listTickets()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/trackzilla/tickets"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json("[]"));

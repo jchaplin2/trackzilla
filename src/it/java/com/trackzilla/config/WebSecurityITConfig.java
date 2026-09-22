@@ -25,8 +25,8 @@ public class WebSecurityITConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll().and()
-                .authorizeRequests().antMatchers("/trackzilla/**").permitAll()
+                .authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll().and()
+                .authorizeHttpRequests().requestMatchers("/trackzilla/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
