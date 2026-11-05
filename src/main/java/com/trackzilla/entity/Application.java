@@ -7,9 +7,9 @@ import lombok.Setter;
 
 
 @Entity
-@SequenceGenerator(name="seq", initialValue=6, allocationSize=100)
 @Getter
 @Setter
+@SequenceGenerator(name="seq", initialValue=6, allocationSize=100)
 public class Application {
 
     @Id

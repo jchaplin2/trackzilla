@@ -24,10 +24,14 @@ public class WebSecurityITConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll().and()
-                .authorizeHttpRequests().requestMatchers("/trackzilla/**").permitAll()
-                .anyRequest().authenticated();
+        http
+                .cors(cors -> {})
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**", "/trackzilla/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -45,9 +49,7 @@ public class WebSecurityITConfig {
 
     @Bean(name= "testProvider")
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
-        authProvider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;

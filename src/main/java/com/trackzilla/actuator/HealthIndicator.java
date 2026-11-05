@@ -2,13 +2,13 @@ package com.trackzilla.actuator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.Health;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Component
-public class HealthIndicator implements org.springframework.boot.actuate.health.HealthIndicator {
+@Component("downstream")
+public class HealthIndicator implements org.springframework.boot.health.contributor.HealthIndicator {
 
     @Value("https://jsonplaceholder.typicode.com/users")
     String downStreamUrl;

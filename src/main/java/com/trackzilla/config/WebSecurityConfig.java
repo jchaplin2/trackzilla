@@ -41,9 +41,10 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.cors(cors -> {})
-				.csrf(csrf -> {})
-				.headers(headers -> headers.frameOptions(f -> f.disable()))
+		http
+				.cors(cors -> {})
+				.csrf(csrf -> csrf.disable())
+				.headers(headers -> headers.frameOptions(f -> f.disable())) // NOTE: enable h2
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
@@ -52,7 +53,8 @@ public class WebSecurityConfig {
 						.requestMatchers("/trackzilla/**").permitAll()
 						.requestMatchers("/actuator/**").permitAll()
 						.anyRequest().authenticated()
-				);
+				)
+				.authenticationProvider(authenticationProvider());
 
 		//NOTE : enable h2
 //		http.headers().frameOptions().disable().and()
@@ -74,9 +76,8 @@ public class WebSecurityConfig {
 
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
 
-		authProvider.setUserDetailsService(userDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
 
 		return authProvider;
